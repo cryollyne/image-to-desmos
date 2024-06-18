@@ -9,6 +9,10 @@ pub struct Vector2 {
 }
 
 impl Vector2 {
+    pub fn dot(self, rhs: Vector2) -> f64 {
+        self.x*rhs.x + self.y*rhs.y
+    }
+
     pub fn from_complex(c: Complex) -> Vector2 {
         Vector2 {
             x: c.real,
