@@ -3,6 +3,9 @@ use image::{DynamicImage, GenericImageView, Luma, Pixel};
 use crate::{Args, Vector2, Vector4};
 
 pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
+    if args.verbose {
+        eprintln!("[2/5] filtering edge points");
+    }
     let (w, h) = image.dimensions();
     let mut buff: image::ImageBuffer<Luma<u8>, Vec<<Luma<u8> as Pixel>::Subpixel>> = image::ImageBuffer::new(w, h);
 
@@ -23,7 +26,7 @@ pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
     });
 
     if let Some(s) = &args.debug_output_image {
-        eprintln!("saving image");
+        eprintln!("      saving image");
         buff.save(s).expect("file failed to save");
     }
 
@@ -38,7 +41,8 @@ pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
 
 pub fn construct_contour(mut edge_points: Vec<Vector2>, args: &Args) -> Vec<Vector2> {
     if args.verbose {
-        eprintln!("creating contour");
+        eprintln!("[3/5] creating contour from edges");
+        eprintln!("      {} points", edge_points.len());
     }
 
     let mut contour = vec![];
@@ -55,10 +59,6 @@ pub fn construct_contour(mut edge_points: Vec<Vector2>, args: &Args) -> Vec<Vect
             }).map(|(i, _)| {i});
         head = edge_points.remove(i.unwrap());
         contour.push(head);
-
-        if args.verbose {
-            eprintln!("{}", edge_points.len());
-        }
     }
     contour
 }

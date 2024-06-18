@@ -23,20 +23,21 @@ pub struct Args {
 
     #[arg(short, long)]
     verbose: bool,
+
+    #[arg(long)]
+    table: bool,
+
 }
 
 fn main() {
     let args = Args::parse();
 
     if args.verbose {
-        eprintln!("opening image");
+        eprintln!("[1/5] opening image");
     }
     let image = ImageReader::open(&args.image).expect("fail to open image")
         .decode().expect("failed to decode image");
 
-    if args.verbose {
-        eprintln!("filtering edge points");
-    }
     let edge_points = edge_detection::get_edges(image, &args);
 
     let contour = edge_detection::construct_contour(edge_points, &args);
@@ -44,19 +45,19 @@ fn main() {
 
 
     if args.verbose {
-        eprintln!("sampling contour");
+        eprintln!("[4/5] sampling contour");
     }
 
     let points = (0..args.sample_count).map(|i| {
         equation_generator::sample(&contour, i as f64/args.sample_count as f64)
     }).collect::<Vec<Vector2>>();
 
-
-
-    if args.verbose {
-        eprintln!("getting frequencies");
+    if args.table {
+        println!("{}", desmos_output::table(&points));
+        return;
     }
 
-    let f = equation_generator::get_frequency_info(&points);
+
+    let f = equation_generator::get_frequency_info(&points, &args);
     println!("{}", desmos_output::parametric_sin(&f));
 }

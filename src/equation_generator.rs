@@ -1,4 +1,4 @@
-use crate::utils::*;
+use crate::{utils::*, Args};
 pub fn sample(points: &[Vector2], t: f64) -> Vector2 {
     let location = (points.len()-1) as f64 * t;
     let prev = points[f64::floor(location) as usize];
@@ -15,7 +15,11 @@ fn get_magnitude_of_frequency(points: &[Complex], frequence: i32) -> Complex {
     }).unwrap()
 }
 
-pub fn get_frequency_info(points: &[Vector2]) -> Vec<(i32, Vector2)> {
+pub fn get_frequency_info(points: &[Vector2], args: &Args) -> Vec<(i32, Vector2)> {
+    if args.verbose {
+        eprintln!("[5/5] calculating frequencies");
+    }
+
     let p = points.iter().map(|x| {Complex::from_vector2(*x)}).collect::<Vec<Complex>>();
     let size = points.len() as i32;
     ((-size/2+1)..(size/2))
