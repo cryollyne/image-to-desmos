@@ -34,5 +34,7 @@ fn main() {
     if args.verbose {
         eprintln!("filtering edge points");
     }
-    let mut edge_points = edge_detection::get_edges(image, &args);
+    let edge_points = edge_detection::get_edges(image, &args);
+
+    let contour = edge_detection::construct_contour(edge_points, args);
 }

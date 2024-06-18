@@ -36,3 +36,29 @@ pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
         }).collect()
 }
 
+pub fn construct_contour(mut edge_points: Vec<Vector2>, args: Args) -> Vec<Vector2> {
+    if args.verbose {
+        eprintln!("creating contour");
+    }
+
+    let mut contour = vec![];
+    let mut head: Vector2;
+    contour.push(edge_points.pop().unwrap());
+    head = contour[0];
+    while !edge_points.is_empty() {
+        let i = edge_points.iter()
+            .enumerate()
+            .min_by(|(_, u), (_, v)| {
+                let du = head - **u;
+                let dv = head - **v;
+                Vector2::dot(du, du).total_cmp(&Vector2::dot(dv, dv))
+            }).map(|(i, _)| {i});
+        head = edge_points.remove(i.unwrap());
+        contour.push(head);
+
+        if args.verbose {
+            eprintln!("{}", edge_points.len());
+        }
+    }
+    contour
+}
