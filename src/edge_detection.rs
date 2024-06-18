@@ -36,7 +36,7 @@ pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
         }).collect()
 }
 
-pub fn construct_contour(mut edge_points: Vec<Vector2>, args: Args) -> Vec<Vector2> {
+pub fn construct_contour(mut edge_points: Vec<Vector2>, args: &Args) -> Vec<Vector2> {
     if args.verbose {
         eprintln!("creating contour");
     }
