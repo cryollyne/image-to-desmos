@@ -12,25 +12,32 @@ use utils::*;
 pub struct Args {
     image: String,
 
-    #[arg(short, long, default_value_t = 256)]
+    #[arg(short, long, default_value_t = 16384)]
     sample_count: u32,
 
-    #[arg(long)]
-    debug_output_image: Option<String>,
+    #[arg(short, long, default_value_t = 512)]
+    frequency_count: u32,
 
-    #[arg(long, default_value_t = 1.0)]
+    #[arg(short, long, default_value_t = 0.2)]
     edge_threshold: f64,
+
+    #[arg(long)]
+    table: bool,
+
 
     #[arg(short, long)]
     verbose: bool,
 
     #[arg(long)]
-    table: bool,
-
+    debug_output_image: Option<String>,
 }
 
 fn main() {
     let args = Args::parse();
+
+    if args.frequency_count > args.sample_count {
+        eprintln!("warning: Frequency is higher than samples. This may lead to aliasing");
+    }
 
     if args.verbose {
         eprintln!("[1/5] opening image");
