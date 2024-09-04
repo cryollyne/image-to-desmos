@@ -16,10 +16,6 @@ fn get_magnitude_of_frequency(points: &[Complex], frequence: i32) -> Complex {
 }
 
 pub fn get_frequency_info(points: &[Vector2], args: &Args) -> Vec<(i32, Vector2)> {
-    if args.verbose {
-        eprintln!("[5/5] calculating frequencies");
-    }
-
     let p = points.iter().map(|x| {Complex::from_vector2(*x)}).collect::<Vec<Complex>>();
     let size = args.frequency_count as i32;
     ((-size/2+1)..(size/2))

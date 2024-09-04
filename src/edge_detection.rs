@@ -3,9 +3,6 @@ use image::{DynamicImage, GenericImageView, Luma, Pixel};
 use crate::{Args, Vector2, Vector4};
 
 pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
-    if args.verbose {
-        eprintln!("[2/5] filtering edge points");
-    }
     let (w, h) = image.dimensions();
     let mut buff: image::ImageBuffer<Luma<u8>, Vec<<Luma<u8> as Pixel>::Subpixel>> = image::ImageBuffer::new(w, h);
 
@@ -39,12 +36,7 @@ pub fn get_edges(image: DynamicImage, args: &Args) -> Vec<Vector2> {
         }).collect()
 }
 
-pub fn construct_contour(mut edge_points: Vec<Vector2>, args: &Args) -> Vec<Vector2> {
-    if args.verbose {
-        eprintln!("[3/5] creating contour from edges");
-        eprintln!("      {} points", edge_points.len());
-    }
-
+pub fn construct_contour(mut edge_points: Vec<Vector2>) -> Vec<Vector2> {
     let mut contour = vec![];
     let mut head: Vector2;
     contour.push(edge_points.pop().unwrap());
