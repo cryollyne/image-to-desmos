@@ -13,6 +13,10 @@ impl Vector2 {
         self.x*rhs.x + self.y*rhs.y
     }
 
+    pub fn magnitude(&self) -> f64 {
+        f64::sqrt(self.x*self.x + self.y*self.y)
+    }
+
     pub fn from_complex(c: Complex) -> Vector2 {
         Vector2 {
             x: c.real,

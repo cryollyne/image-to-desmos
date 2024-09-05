@@ -7,6 +7,7 @@ pub mod equation_generator;
 pub mod utils;
 use utils::*;
 pub mod pipeline;
+pub mod samplers;
 use pipeline::{FunctionTransform, Pipeline};
 
 #[derive(Parser, Debug)]
@@ -32,6 +33,8 @@ pub struct Args {
     debug_output_image: Option<String>,
 }
 
+use samplers::{Sampler, UniformSpacialSampler};
+
 fn main() {
     let args = Args::parse();
 
@@ -46,12 +49,12 @@ fn main() {
             .expect("failed to decode image")
     }, "opening image").compose(FunctionTransform::new(|image: image::DynamicImage| {
         edge_detection::get_edges(image, &args)
-    }, "detecting edges")).compose(FunctionTransform::new(
-        edge_detection::construct_contour
-    , "constructing contour")).compose(FunctionTransform::new(|x: Vec<Vector2>| {
-        (0..args.sample_count)
-                .map(|i| equation_generator::sample(&x, i as f64 / args.sample_count as f64))
-                .collect::<Vec<Vector2>>()
+    }, "detecting edges")).compose(FunctionTransform::new(|x| {
+        let mut contour = edge_detection::construct_contour(x);
+        contour.push(contour[0]);
+        contour
+    }, "constructing contour")).compose(FunctionTransform::new(|x: Vec<Vector2>| {
+        UniformSpacialSampler::new(x).sample(args.sample_count)
     }, "sampling contour"));
 
     if args.table {
